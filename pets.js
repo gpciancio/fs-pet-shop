@@ -2,13 +2,17 @@ const fs = require('fs');
 
 var pets = JSON.parse(fs.readFileSync('pets.json', 'utf8'));
 
-console.log(fs.readFile('pets.json', 'utf8'));
+var method = process.argv[2]
+var index = process.argv[3]
 
-if (method !== 'read' && 'create' && 'update' && 'destroy'){
-  console.error(new Error("Usage: node pets.js [read | create | update | destroy]"));
+
+if (method === 'read'){
+  if (index>=0){
+    console.log(pets[index]);
+  }else{
+    console.log(pets);
+  }
+} else {
+  console.error(`Usage: node pets.js [read | create | update | destroy]`);
+  process.exit(1);
 }
-  var method = process.argv[2]
-  var index = process.argv[3]
-
-  // console.log(pets);
-  console.log(pets[index]);
