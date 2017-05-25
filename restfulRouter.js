@@ -66,8 +66,18 @@ router.post('/',(req,res,next) => {
 
 
 
-router.patch('/',(req,res,next) => {
-  console.log(req.body);;
+router.patch('/:id',(req,res,next) => {
+  var updates = Object.keys(req.body);
+  var petsArr = JSON.parse(fs.readFileSync('pets.json', 'utf8'));
+  for (let i = 0; i<updates.length; i++){
+    petsArr[req.params.id][updates[i]] = req.body[updates[i]]
+  }
+    fs.writeFile('pets.json', JSON.stringify(petsArr), function (writeErr){
+      if (writeErr){
+        throw writeErr;
+      }
+        res.send(petsArr[req.params.id]);
+    })
 });
 
 router.delete('/:id',(req,res,next) => {
