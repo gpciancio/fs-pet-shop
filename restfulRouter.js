@@ -69,19 +69,36 @@ router.post('/',(req,res,next) => {
 router.patch('/:id',(req,res,next) => {
   var updates = Object.keys(req.body);
   var petsArr = JSON.parse(fs.readFileSync('pets.json', 'utf8'));
+  var id = Number.parseInt(req.params.id);
+  if (id < 0 || id >= pets.length || Number.isNaN(id)) {
+    return res.sendStatus(404);
+  }
   for (let i = 0; i<updates.length; i++){
-    petsArr[req.params.id][updates[i]] = req.body[updates[i]]
+    petsArr[id][updates[i]] = req.body[updates[i]]
   }
     fs.writeFile('pets.json', JSON.stringify(petsArr), function (writeErr){
       if (writeErr){
         throw writeErr;
       }
-        res.send(petsArr[req.params.id]);
+        res.send(petsArr[id]);
     })
 });
 
-router.delete('/:id',(req,res,next) => {
-  res.send("DELETE ONE NAMED " + req.params.id);
+router.delete('/:id',(req,res,next) =>{
+  var id = Number.parseInt(req.params.id);
+  if (id < 0 || id >= pets.length || Number.isNaN(id)) {
+    return res.sendStatus(404);
+  }
+  // console.log(req.body);
+  var petsArr = JSON.parse(fs.readFileSync('pets.json', 'utf8'));
+  // console.log(req.params.id);
+  var dead = petsArr.splice(id,1);
+  fs.writeFile('pets.json', JSON.stringify(dead), function (writeErr){
+    if (writeErr){
+      throw writeErr;
+    }
+    res.send(dead[0]);
+  })
 });
 
 module.exports = router;
