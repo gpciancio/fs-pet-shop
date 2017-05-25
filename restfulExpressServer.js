@@ -36,6 +36,6 @@ module.exports = app;
 //   res.sendStatus(404);
 // });
 //
-// app.listen(port, function() {
-//   console.log('Listening on port', port);
-// });
+app.listen(port, function() {
+  console.log('Listening on port', port);
+});

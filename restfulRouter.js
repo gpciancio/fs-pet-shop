@@ -4,6 +4,13 @@ const fs = require('fs');
 var pets = fs.readFileSync('pets.json', 'utf8');
 var path = require('path');
 var petsPath = path.join(__dirname, 'pets.json');
+var bodyParser = require('body-parser');
+
+// parse application/x-www-form-urlencoded
+router.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+router.use(bodyParser.json())
 
 
 router.get('/',(req,res,next) => {
@@ -33,33 +40,34 @@ router.get('/:id',(req,res,next) => {
     });
 });
 
+
+
 router.post('/',(req,res,next) => {
-  var age = req.param.age;
-  var kind = req.param.kind;
-  var name = req.param.name;
+  var age = req.body.age;
+  var kind = req.body.kind;
+  var name = req.body.name;
   if (!age || !kind || !name){
     res.sendStatus(400);
   } else {
+    var petsArr = JSON.parse(fs.readFileSync('pets.json', 'utf8'));
     var newPetObj = {};
     newPetObj.age = Number(age);
     newPetObj.kind = kind;
     newPetObj.name = name;
-    pets.push(newPetObj);
-    fs.writeFile('pets.json', JSON.stringify(pets), function (writeErr){
+    petsArr.push(newPetObj);
+    fs.writeFile('pets.json', JSON.stringify(petsArr), function (writeErr){
       if (writeErr){
         throw writeErr;
       }
-        console.log(newPetObj);
+        res.send(petsArr[petsArr.length-1]);
     })
   }
 })
 
-router.put('/:id',(req,res,next) => {
-  res.send("UPDATE ONE NAMED " + req.params.id);
-});
 
-router.patch('/:id',(req,res,next) => {
-  res.send("PARTIAL UPDATE ONE NAMED " + req.params.id);
+
+router.patch('/',(req,res,next) => {
+  console.log(req.body);;
 });
 
 router.delete('/:id',(req,res,next) => {
